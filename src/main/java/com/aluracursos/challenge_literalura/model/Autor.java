@@ -16,8 +16,8 @@ public class Autor {
 
     private long Id;
     private String nombre;
-    private String fechaDeNacimiento;
-    private String fechaDeMuerte;
+    private Integer fechaDeNacimiento;
+    private Integer fechaDeMuerte;
 
     //private List<Libro> listaLibros;
 
@@ -51,19 +51,19 @@ public class Autor {
         this.nombre = nombre;
     }
 
-    public String getFechaDeNacimiento() {
+    public Integer getFechaDeNacimiento() {
         return fechaDeNacimiento;
     }
 
-    public void setFechaDeNacimiento(String fechaDeNacimiento) {
+    public void setFechaDeNacimiento(Integer fechaDeNacimiento) {
         this.fechaDeNacimiento = fechaDeNacimiento;
     }
 
-    public String getFechaDeMuerte() {
+    public Integer getFechaDeMuerte() {
         return fechaDeMuerte;
     }
 
-    public void setFechaDeMuerte(String fechaDeMuerte) {
+    public void setFechaDeMuerte(Integer fechaDeMuerte) {
         this.fechaDeMuerte = fechaDeMuerte;
     }
 
@@ -73,7 +73,7 @@ public class Autor {
 
     }
 
-    public Autor(String nombre, String fechaDeNacimiento, String fechaDeMuerte) {
+    public Autor(String nombre, Integer fechaDeNacimiento, Integer fechaDeMuerte) {
         this.nombre = nombre;
         this.fechaDeNacimiento = fechaDeNacimiento;
         this.fechaDeMuerte = fechaDeMuerte;
@@ -87,10 +87,9 @@ public class Autor {
 
     @Override
     public String toString() {
-        return "Autor{" +
-                ", nombre='" + nombre.toLowerCase() + '\'' +
+        return "Autor: "+
+                "  nombre='" + nombre + '\'' +
                 ", fechaDeNacimiento='" + fechaDeNacimiento + '\'' +
-                ", fechaDeMuerte='" + fechaDeMuerte + '\'' +
-                '}';
+                ", fechaDeMuerte='" + fechaDeMuerte + '\'';
     }
 }

@@ -10,8 +10,8 @@ import java.util.Optional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record DatosAutor(
         @JsonAlias("name") String nombre,
-        @JsonAlias("birth_year") String fechaDeNacimiento,
-        @JsonAlias("death_year") String fechaDeMuerte
+        @JsonAlias("birth_year") Integer fechaDeNacimiento,
+        @JsonAlias("death_year") Integer fechaDeMuerte
 
 
 ) {

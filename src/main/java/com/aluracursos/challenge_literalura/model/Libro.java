@@ -100,12 +100,10 @@ public class Libro{
 
     @Override
     public String toString() {
-        return  "*****Libro*****" + '\'' +
+        return  " *****Libro*****" + '\'' +
                 ", titulo='" + titulo + '\'' +
                 ", idioma='" + idiomas + '\'' +
                 ", numeroDescargas=" + numeroDescargas +
-                ", autor=" + autor.getNombre() +
-
-                '}';
+                ", autor=" + autor.getNombre() ;
     }
 }

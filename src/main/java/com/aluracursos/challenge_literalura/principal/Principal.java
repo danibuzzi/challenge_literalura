@@ -8,6 +8,7 @@ import com.aluracursos.challenge_literalura.service.ConsumoAPI;
 import com.aluracursos.challenge_literalura.service.ConvierteDatos;
 import com.aluracursos.challenge_literalura.service.LibroService;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,9 @@ public class Principal {
     private ConsumoAPI consumoAPI = new ConsumoAPI();
     private ConvierteDatos conversor = new ConvierteDatos();
     private Scanner teclado = new Scanner(System.in);
+
+    private List<Libro> libros;
+    private List<Autor> autores;
 
     private LibroRepository repositorioLibro;
     private AutorRepository repositorioAutor;
@@ -32,21 +36,23 @@ public class Principal {
 
 
 
+
     public void muestraElMenu(){
 
         var opcion = -1;
         while (opcion != 0) {
             var menu = """
                     1 - Buscar libros por título 
-                    2 - Listar libros registrados
+                    2 - Listar libros registrados 
                     3 - Listar autores registrados
                     4 - Listar autores por nombre 
                     5 - Listar autores vivos en un determinado año 
-                    6 - Listar autores por idioma 
+                    6 - Listar libros por idioma 
                     7 - Listar libros por tema 
                     8 - Top 10 libros más descargados   
                     9 - Mostrar estadísticas de descargas de libros       
                     0 - Salir
+                    Elige una opción: 
                     """;
             System.out.println(menu);
             opcion = teclado.nextInt();
@@ -66,51 +72,43 @@ public class Principal {
                         System.out.println("Libro Encontrado ");
                         System.out.println(libroBuscado.get());
                         System.out.println("Guardando libro y autor");
+
                         Libro libro=new Libro(libroBuscado);
 
-
-                        //Autor autor=new Autor(libro.getAutor().getNombre(),libro.getAutor().getFechaDeNacimiento(),
-                          //      libro.getAutor().getFechaDeMuerte());
                         Autor autor=new Autor(libroBuscado.get().autor().get(0).nombre(),
                                 libroBuscado.get().autor().get(0).fechaDeNacimiento(),
                                 libroBuscado.get().autor().get(0).fechaDeMuerte());
                         libro.setAutor(autor);
-                        repositorioAutor.save(autor);
+                        Optional<Libro> libroRegistrado= repositorioLibro.obtenerLibroPorNombre(libroBuscado.get().titulo());
+
+                        Optional<Autor> autorRegistrado=repositorioAutor.listarAutorPorNombre(libroBuscado.get().autor().get(0).nombre());
+                        if (autorRegistrado.isPresent()){
+                            System.out.println("El autor ya está registrado por tanto no se guardará nuevamente ");
+                        }else{
+                            repositorioAutor.save(autor);
+                        }
+                        if (libroRegistrado.isPresent()){
+                            System.out.println("El libro ya está registrado por tanto no se guardará nuevamente ");
+                        }
                         repositorioLibro.save(libro);
 
 
                     }else {
                         System.out.println("Libro no encontrado");
-                        /*Libro libro=new Libro(libroBuscado);
-                        libroRepository.save(libro);
-                        Autor autor=new Autor(libro.getAutor().getNombre(),libro.getAutor().getFechaDeNacimiento(),
-                                libro.getAutor().getFechaDeMuerte());
-                        autorRepository.save(autor);
-                        ///DatosAutor datosAutor=new DatosAutor(
-                          //      libroBuscado.get().autor().stream()
-                            //            .findFirst());
-                                       // .map(a->a.nombre() +" "+a.fechaDeNacimiento() +" "+ a.fechaDeNacimiento()))
-                                       // .findFirst();
-
-
-                                //libroBuscado.get().autor().get().fechaDeMuerte());
-                        //Autor autor=new Autor(datosAutor);
-                       //autorRepository.save(autor);*/
-
                     }
 
                     break;
                 case 2:
-                    //buscarEpisodioPorSerie();
+                    listarLibrosRegistrados();
                     break;
                 case 3:
-                    //mostrarSeriesBuscadas();
+                    listarAutoresRegistrados();
                     break;
                 case 4:
-                    //buscarSeriesPorTitulo();
+                    listarAutoresPorNombre();
                     break;
                 case 5:
-                    //buscarTop5Series();
+                    listarAutoresVivoEnAnio();
                     break;
                 case 6:
                     //buscarSeriesPorCategoria();
@@ -119,10 +117,10 @@ public class Principal {
                     //buscarSeriesPorTemporadaYEvaluacion();
                     break;
                 case 8:
-                    //buscarEpisodiosPorTitulo();
+                    listarTop10LibrosDescargas();
                     break;
                 case 9:
-                    //buscarTop5Episodios();
+                    estadisticasDescargasLibros();
                     break;
                 case 0:
                     System.out.println("Cerrando la aplicación...");
@@ -134,7 +132,7 @@ public class Principal {
         }
 
 
-        var json = consumoAPI.obtenerDatos(URL_BASE);
+       /* var json = consumoAPI.obtenerDatos(URL_BASE);
         System.out.println(json);
         var datos = conversor.obtenerDatos(json,Datos.class);
         System.out.println(datos);
@@ -170,8 +168,62 @@ public class Principal {
         System.out.println("Cantidad máxima de descargas: "+ est.getMax());
         System.out.println("Cantidad mínima de descargas: " + est.getMin());
         System.out.println(" Cantidad de registros evaluados para calcular las estadisticas: " + est.getCount());
+*/
+    }
+    private void listarLibrosRegistrados(){
+        repositorioLibro.findAll().stream()
+
+                .forEach(System.out::println);
 
     }
+
+    private void listarAutoresRegistrados(){
+        repositorioAutor.findAll().stream()
+                        .forEach(System.out::println);
+        //System.out.println("-------Autor------- ");
+        //System.out.println("Nombre "+autores.get().getNombre());
+
+       /* repositorioAutor.listarAutoresRegistrados().stream()
+                .forEach(System.out::println);*/
+    }
+
+    private void listarTop10LibrosDescargas() {
+
+        List<Libro> topLibros =repositorioLibro.findTop10ByOrderByNumeroDescargasDesc();
+        topLibros.forEach(l-> System.out.println("Libro: "+l.getTitulo()+
+                " -  Cantidad de descargas:  "+l.getNumeroDescargas()));
+    }
+
+    private void listarAutoresVivoEnAnio(){
+        System.out.println("Ingrese el año del cual desea saber que autores estaban vivos ");
+        int anio =teclado.nextInt();
+        repositorioAutor.listarAutoresVivosEnAnio(anio).stream()
+                .forEach(System.out::println);
+
+    }
+
+    private void listarAutoresPorNombre(){
+        System.out.println("Ingrese el nombre del autor que desea buscar ");
+        String nombre=teclado.nextLine();
+        repositorioAutor.listarAutorPorNombre(nombre).stream()
+                .forEach(System.out::println);
+    }
+
+    private  void estadisticasDescargasLibros(){
+        var json = consumoAPI.obtenerDatos(URL_BASE);
+        var datos = conversor.obtenerDatos(json,Datos.class);
+        DoubleSummaryStatistics est= datos.resultados().stream()
+
+                .filter(d -> d.numeroDeDescargas() >0 )
+                .collect(Collectors.summarizingDouble(DatosLibros::numeroDeDescargas));
+        System.out.println("---Estadisticas de descargar de libros en datos de la API----");
+        System.out.println("Cantidad media de descargas: " + est.getAverage());
+        System.out.println("Cantidad máxima de descargas: "+ est.getMax());
+        System.out.println("Cantidad mínima de descargas: " + est.getMin());
+        System.out.println(" Cantidad de registros evaluados para calcular las estadisticas: " + est.getCount());
+
+    }
+
 }
 
 
