@@ -80,8 +80,9 @@ public class Principal {
                                 libroBuscado.get().autor().get(0).fechaDeMuerte());
                         libro.setAutor(autor);
                         Optional<Libro> libroRegistrado= repositorioLibro.obtenerLibroPorNombre(libroBuscado.get().titulo());
-
+                        System.out.println("Consulta libro");
                         Optional<Autor> autorRegistrado=repositorioAutor.listarAutorPorNombre(libroBuscado.get().autor().get(0).nombre());
+                        System.out.println("Consulta autor");
                         if (autorRegistrado.isPresent()){
                             System.out.println("El autor ya está registrado por tanto no se guardará nuevamente ");
                         }else{
@@ -89,9 +90,9 @@ public class Principal {
                         }
                         if (libroRegistrado.isPresent()){
                             System.out.println("El libro ya está registrado por tanto no se guardará nuevamente ");
+                        }else {
+                            repositorioLibro.save(libro);
                         }
-                        repositorioLibro.save(libro);
-
 
                     }else {
                         System.out.println("Libro no encontrado");
