@@ -37,33 +37,47 @@ public class Principal {
             opcion = teclado.nextInt();
             teclado.nextLine();
 
-          /*  switch (opcion) {
+           switch (opcion) {
                 case 1:
-                    buscarSerieWeb();
+                    //buscarSerieWeb();
+                    System.out.println("Ingrese el nombre del libro que desea buscar");
+                    var tituloLibro = teclado.nextLine();
+                    String json = consumoAPI.obtenerDatos(URL_BASE+"?search=" + tituloLibro.replace(" ","+"));
+                    var datosBusqueda = conversor.obtenerDatos(json, Datos.class);
+                    Optional<DatosLibros> libroBuscado = datosBusqueda.resultados().stream()
+                            .filter(l -> l.titulo().toUpperCase().contains(tituloLibro.toUpperCase()))
+                            .findFirst();
+                    if(libroBuscado.isPresent()){
+                        System.out.println("Libro Encontrado ");
+                        System.out.println(libroBuscado.get());
+                    }else {
+                        System.out.println("Libro no encontrado");
+                    }
+
                     break;
                 case 2:
-                    buscarEpisodioPorSerie();
+                    //buscarEpisodioPorSerie();
                     break;
                 case 3:
-                    mostrarSeriesBuscadas();
+                    //mostrarSeriesBuscadas();
                     break;
                 case 4:
-                    buscarSeriesPorTitulo();
+                    //buscarSeriesPorTitulo();
                     break;
                 case 5:
-                    buscarTop5Series();
+                    //buscarTop5Series();
                     break;
                 case 6:
-                    buscarSeriesPorCategoria();
+                    //buscarSeriesPorCategoria();
                     break;
                 case 7:
-                    buscarSeriesPorTemporadaYEvaluacion();
+                    //buscarSeriesPorTemporadaYEvaluacion();
                     break;
                 case 8:
-                    buscarEpisodiosPorTitulo();
+                    //buscarEpisodiosPorTitulo();
                     break;
                 case 9:
-                    buscarTop5Episodios();
+                    //buscarTop5Episodios();
                     break;
                 case 0:
                     System.out.println("Cerrando la aplicación...");
@@ -71,7 +85,7 @@ public class Principal {
                     break;
                 default:
                     System.out.println("Opción inválida");
-            }*/
+            }
         }
 
 

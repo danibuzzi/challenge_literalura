@@ -1,6 +1,9 @@
 package com.aluracursos.challenge_literalura.model;
 import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @Entity
 @Table(name="libros")
 
@@ -14,8 +17,8 @@ public class Libro{
 
     @Column(unique = true)
     private String titulo;
-    private String idioma;
-    private  Integer numeroDescargas;
+    private List<String> idiomas;
+    private  Double numeroDescargas;
 
 
 
@@ -27,14 +30,32 @@ public class Libro{
     //la entidad episodios, si hay un cambio en esta entidad (Serie) debe ser reflejado tambien en Episodios
     //pido los datos de manera ansiosa (trae todos los datos al mismo tiempo)
 
-    @OneToOne(mappedBy = "libro",cascade = CascadeType.ALL,fetch=FetchType.EAGER)
-    //private List<Episodio> episodios;
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
+
     private Autor autor;
+
     //Ojo JAp siempre exige que cada clase tenga un constructor predeterminado
 
     public Libro() {
 
     }
+
+    public Libro(DatosLibros datos) {
+        this.titulo = datos.titulo();
+        Optional<DatosAutor> autor = datos.autor().stream().findFirst();
+        Optional<String> idioma = datos.idiomas().stream().findFirst();
+        this.numeroDescargas=datos.numeroDeDescargas();
+    }
+
+    public Libro(Optional<DatosLibros> datos) {
+        this.titulo = datos.get().titulo();
+        Optional<DatosAutor> autor = datos.get().autor().stream().findFirst();
+        Optional<String> idioma = datos.get().idiomas().stream().findFirst();
+        this.numeroDescargas=datos.get().numeroDeDescargas();
+
+    }
+
 
     public long getId() {
         return Id;
@@ -52,15 +73,39 @@ public class Libro{
         this.titulo = titulo;
     }
 
+    public Autor getAutor() {
+        return autor;
+    }
+
+    public void setAutor(Autor autor) {
+        this.autor = autor;
+    }
+
+    public Double getNumeroDescargas() {
+        return numeroDescargas;
+    }
+
+    public void setNumeroDescargas(Double numeroDescargas) {
+        this.numeroDescargas = numeroDescargas;
+    }
+
+    public List<String> getIdiomas() {
+        return idiomas;
+    }
+
+    public void setIdiomas(List<String> idiomas) {
+        this.idiomas = idiomas;
+    }
+
 
     @Override
     public String toString() {
-        return "Libro{" +
-                "Id=" + Id +
+        return  "*****Libro*****" + '\'' +
                 ", titulo='" + titulo + '\'' +
-                ", idioma='" + idioma + '\'' +
+                ", idioma='" + idiomas + '\'' +
                 ", numeroDescargas=" + numeroDescargas +
-                ", autor=" + autor +
+                ", autor=" + autor.getNombre() +
+
                 '}';
     }
 }
