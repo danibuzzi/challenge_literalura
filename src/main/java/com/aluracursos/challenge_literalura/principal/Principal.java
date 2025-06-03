@@ -1,14 +1,14 @@
 package com.aluracursos.challenge_literalura.principal;
 
-import com.aluracursos.challenge_literalura.model.Datos;
-import com.aluracursos.challenge_literalura.model.DatosLibros;
+import com.aluracursos.challenge_literalura.model.*;
+import com.aluracursos.challenge_literalura.repository.AutorRepository;
+import com.aluracursos.challenge_literalura.repository.LibroRepository;
+import com.aluracursos.challenge_literalura.service.AutorService;
 import com.aluracursos.challenge_literalura.service.ConsumoAPI;
 import com.aluracursos.challenge_literalura.service.ConvierteDatos;
+import com.aluracursos.challenge_literalura.service.LibroService;
 
-import java.util.Comparator;
-import java.util.DoubleSummaryStatistics;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -16,6 +16,21 @@ public class Principal {
     private ConsumoAPI consumoAPI = new ConsumoAPI();
     private ConvierteDatos conversor = new ConvierteDatos();
     private Scanner teclado = new Scanner(System.in);
+
+    private LibroRepository repositorioLibro;
+    private AutorRepository repositorioAutor;
+
+
+    public Principal(LibroRepository repositoryLibro,AutorRepository repositoryAutor) {
+        this.repositorioLibro=repositoryLibro;
+        this.repositorioAutor=repositoryAutor;
+
+    }
+
+    private LibroService libroService;
+    private AutorService autorService;
+
+
 
     public void muestraElMenu(){
 
@@ -50,8 +65,38 @@ public class Principal {
                     if(libroBuscado.isPresent()){
                         System.out.println("Libro Encontrado ");
                         System.out.println(libroBuscado.get());
+                        System.out.println("Guardando libro y autor");
+                        Libro libro=new Libro(libroBuscado);
+
+
+                        //Autor autor=new Autor(libro.getAutor().getNombre(),libro.getAutor().getFechaDeNacimiento(),
+                          //      libro.getAutor().getFechaDeMuerte());
+                        Autor autor=new Autor(libroBuscado.get().autor().get(0).nombre(),
+                                libroBuscado.get().autor().get(0).fechaDeNacimiento(),
+                                libroBuscado.get().autor().get(0).fechaDeMuerte());
+                        libro.setAutor(autor);
+                        repositorioAutor.save(autor);
+                        repositorioLibro.save(libro);
+
+
                     }else {
                         System.out.println("Libro no encontrado");
+                        /*Libro libro=new Libro(libroBuscado);
+                        libroRepository.save(libro);
+                        Autor autor=new Autor(libro.getAutor().getNombre(),libro.getAutor().getFechaDeNacimiento(),
+                                libro.getAutor().getFechaDeMuerte());
+                        autorRepository.save(autor);
+                        ///DatosAutor datosAutor=new DatosAutor(
+                          //      libroBuscado.get().autor().stream()
+                            //            .findFirst());
+                                       // .map(a->a.nombre() +" "+a.fechaDeNacimiento() +" "+ a.fechaDeNacimiento()))
+                                       // .findFirst();
+
+
+                                //libroBuscado.get().autor().get().fechaDeMuerte());
+                        //Autor autor=new Autor(datosAutor);
+                       //autorRepository.save(autor);*/
+
                     }
 
                     break;
@@ -128,3 +173,5 @@ public class Principal {
 
     }
 }
+
+

@@ -44,14 +44,14 @@ public class Libro{
     public Libro(DatosLibros datos) {
         this.titulo = datos.titulo();
         Optional<DatosAutor> autor = datos.autor().stream().findFirst();
-        Optional<String> idioma = datos.idiomas().stream().findFirst();
+        Optional<String> idiomas = datos.idiomas().stream().findFirst();
         this.numeroDescargas=datos.numeroDeDescargas();
     }
 
     public Libro(Optional<DatosLibros> datos) {
         this.titulo = datos.get().titulo();
         Optional<DatosAutor> autor = datos.get().autor().stream().findFirst();
-        Optional<String> idioma = datos.get().idiomas().stream().findFirst();
+        Optional<String> idiomas = datos.get().idiomas().stream().findFirst();
         this.numeroDescargas=datos.get().numeroDeDescargas();
 
     }
