@@ -71,7 +71,7 @@ public class Principal {
                     if(libroBuscado.isPresent()){
                         System.out.println("Libro Encontrado ");
                         System.out.println(libroBuscado.get());
-                        System.out.println("Guardando libro y autor");
+
 
                         Libro libro=new Libro(libroBuscado);
 
@@ -82,15 +82,25 @@ public class Principal {
                         Optional<Libro> libroRegistrado= repositorioLibro.obtenerLibroPorNombre(libroBuscado.get().titulo());
                         System.out.println("Consulta libro");
                         Optional<Autor> autorRegistrado=repositorioAutor.listarAutorPorNombre(libroBuscado.get().autor().get(0).nombre());
+
                         System.out.println("Consulta autor");
+
                         if (autorRegistrado.isPresent()){
                             System.out.println("El autor ya está registrado por tanto no se guardará nuevamente ");
-                        }else{
-                            repositorioAutor.save(autor);
                         }
+
                         if (libroRegistrado.isPresent()){
                             System.out.println("El libro ya está registrado por tanto no se guardará nuevamente ");
-                        }else {
+                        }
+
+                        if (autorRegistrado.isEmpty() && libroRegistrado.isEmpty()){
+                            System.out.println("Guardando libro y autor");
+                            repositorioAutor.save(autor);
+                            repositorioLibro.save(libro);
+                        }
+
+                        if (autorRegistrado.isPresent() && libroRegistrado.isEmpty()){
+                            System.out.println("Autor ya registrado, se está guardando un nuevo libro");
                             repositorioLibro.save(libro);
                         }
 
@@ -112,7 +122,7 @@ public class Principal {
                     listarAutoresVivoEnAnio();
                     break;
                 case 6:
-                    //buscarSeriesPorCategoria();
+                    listarLibrosPorIdioma();
                     break;
                 case 7:
                     //buscarSeriesPorTemporadaYEvaluacion();
@@ -194,6 +204,40 @@ public class Principal {
         topLibros.forEach(l-> System.out.println("Libro: "+l.getTitulo()+
                 " -  Cantidad de descargas:  "+l.getNumeroDescargas()));
     }
+
+    public void muestraElMenuIdiomas(){
+
+        var menuIdioma = """
+                    es - ("Español")
+                    en -("Inglés")
+                    fr - ("Francés")
+                    pt - ("Portugués")
+                    nd - ("No disponible")
+                    
+                    Ingrese una opción:
+                    """;
+        System.out.println(menuIdioma);
+        }
+
+
+    private void listarLibrosPorIdioma(){
+        muestraElMenuIdiomas();
+        var opcionIdioma="";
+
+
+            opcionIdioma = teclado.nextLine().toLowerCase().trim();
+            /*while (!opcionIdioma.equalsIgnoreCase("es") || !opcionIdioma.equalsIgnoreCase("en")
+
+                    || !opcionIdioma.equalsIgnoreCase("fr")  || !opcionIdioma.equalsIgnoreCase("pt")
+                    || !opcionIdioma.equalsIgnoreCase("nd")){
+                      opcionIdioma = teclado.nextLine().toLowerCase().trim();
+            }*/
+
+        repositorioLibro.listarLibrosPorIdioma(Idioma.valueOf(opcionIdioma))
+                .forEach(System.out::println);
+    }
+
+
 
     private void listarAutoresVivoEnAnio(){
         System.out.println("Ingrese el año del cual desea saber que autores estaban vivos ");
