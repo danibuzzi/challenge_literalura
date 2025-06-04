@@ -17,7 +17,9 @@ public class Libro{
 
     @Column(unique = true)
     private String titulo;
-    private List<String> idiomas;
+
+    @Enumerated(EnumType.STRING)
+    private Idioma idioma;
     private  Double numeroDescargas;
 
 
@@ -44,14 +46,16 @@ public class Libro{
     public Libro(DatosLibros datos) {
         this.titulo = datos.titulo();
         Optional<DatosAutor> autor = datos.autor().stream().findFirst();
-        Optional<String> idiomas = datos.idiomas().stream().findFirst();
+        Optional<String> idioma = datos.idiomas().stream().findFirst();
+        idioma.ifPresent(s -> this.idioma = Idioma.stringToEnum(s));
         this.numeroDescargas=datos.numeroDeDescargas();
     }
 
     public Libro(Optional<DatosLibros> datos) {
         this.titulo = datos.get().titulo();
         Optional<DatosAutor> autor = datos.get().autor().stream().findFirst();
-        Optional<String> idiomas = datos.get().idiomas().stream().findFirst();
+        Optional<String> idioma = datos.get().idiomas().stream().findFirst();
+        idioma.ifPresent(s -> this.idioma = Idioma.stringToEnum(s));
         this.numeroDescargas=datos.get().numeroDeDescargas();
 
     }
@@ -77,6 +81,14 @@ public class Libro{
         return autor;
     }
 
+    public Idioma getIdioma() {
+        return idioma;
+    }
+
+    public void setIdioma(Idioma idioma) {
+        this.idioma = idioma;
+    }
+
     public void setAutor(Autor autor) {
         this.autor = autor;
     }
@@ -89,12 +101,12 @@ public class Libro{
         this.numeroDescargas = numeroDescargas;
     }
 
-    public List<String> getIdiomas() {
-        return idiomas;
+    public Idioma getIdiomas() {
+        return idioma;
     }
 
     public void setIdiomas(List<String> idiomas) {
-        this.idiomas = idiomas;
+        this.idioma = idioma;
     }
 
 
@@ -102,7 +114,7 @@ public class Libro{
     public String toString() {
         return  " *****Libro*****" + '\'' +
                 ", titulo='" + titulo + '\'' +
-                ", idioma='" + idiomas + '\'' +
+                ", idioma='" + idioma + '\'' +
                 ", numeroDescargas=" + numeroDescargas +
                 ", autor=" + autor.getNombre() ;
     }
